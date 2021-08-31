@@ -12,6 +12,8 @@ labels = ["AA", "BB", "CC", "DD", "EE", "FF", "GG", "HH", "II", "JJ"]
 with open("alldata.pkl", 'rb') as handle:
     alldata = pickle.load(handle)
 
+
+fdata = {}
 for i in range(0, 10):
     for j in range(i, 10):
         avlist = []
@@ -30,10 +32,16 @@ for i in range(0, 10):
         df[name] = ""
         
         if len(avlist) == 0 :
+            fdata[name] = [0.0, 0.0]
             df.loc[0, name] = ("Mean : 0")
             df.loc[1, name] = ("Deviation : 0")
         else :
+            fdata[name] = [av, normal.std()]
             df.loc[0, name] = ("Mean : " + str(av))
             df.loc[1, name] = ("Deviation : " + str(normal.std()))
 
 df.to_csv('resultcalc.csv') 
+
+f = open("fdata.pkl","wb")
+pickle.dump(fdata, f, protocol=pickle.HIGHEST_PROTOCOL)
+f.close
