@@ -2,8 +2,11 @@ import numpy as np
 import math
 import pickle
 import random
+import matplotlib.pyplot as plt
+import pandas as pd
 
 labels = ["AA", "BB", "CC", "DD", "EE", "FF", "GG", "HH", "II", "JJ"]
+percentages = [0.21, 0.39, 0.02, 0.21, 0.08, 0.0, 0.05, 0.04, 0.0, 0.0]
 planted = {}
 treenum = []
 used = {}
@@ -22,10 +25,11 @@ def distance(X1,Y1,E1,X2,Y2,E2):
     return D
 
 
-for lbl in labels:
-    num = int(input("Number of "+lbl+" trees: "))
-    treenum.append(num)
+num = int(input("Number of Trees: "))
+for per in percentages:
+    treenum.append(round((num*per)))
 
+print(treenum)
 
 xcoord = float(input("start point X: "))
 ycoord = float(input("start point Y: "))
@@ -109,4 +113,35 @@ while(True):
         else:
             continue
 
-print(planted)
+fig = plt.figure(figsize=(10,10))
+ax = fig.add_subplot(111)
+
+labels = ["AA", "BB", "CC", "DD", "EE", "FF", "GG", "HH", "II", "JJ"]
+colors = ['blue', 'orange', 'green', 'red', 'brown', 'black', 'purple', 'pink', 'cyan', 'olive']
+markers = ['.', 'v', 's', 'x', '+', '1', '2', '3', '4', '.']
+lb = []
+lx = []
+ly = []
+for i in range(len(labels)):
+    namex = labels[i]+"X"
+    namey = labels[i]+"Y"
+    ax.scatter(planted[namex], planted[namey], c=colors[i], marker=markers[i], label=labels[i])
+    for j in range(len(planted[namex])):
+        lb.append(labels[i])
+        lx.append(planted[namex][j])
+        ly.append(planted[namey][j])
+
+df = pd.DataFrame({"Labels" : lb, "X" : lx, "Y" : ly})
+df.to_csv("sample.csv", index=False)
+    
+line1 = [[xcoord, xcoord + length], [ycoord, ycoord]]
+line2 = [[xcoord, xcoord], [ycoord, ycoord + width]]
+line3 = [[xcoord + length, xcoord + length], [ycoord, ycoord + width]]
+line4 = [[xcoord, xcoord + length], [ycoord + width, ycoord + width]]
+ax.plot(line1[0], line1[1], linestyle="-", color='k')
+ax.plot(line2[0], line2[1], linestyle="-", color='k')
+ax.plot(line3[0], line3[1], linestyle="-", color='k')
+ax.plot(line4[0], line4[1], linestyle="-", color='k')
+
+plt.legend()
+plt.show()      
